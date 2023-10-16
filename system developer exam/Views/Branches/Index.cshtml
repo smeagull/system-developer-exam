@@ -1,0 +1,96 @@
+﻿@model IEnumerable<Branch>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@if (TempData["success"] != null)
+{
+    <h2>@TempData["success"]</h2>
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary text-start">Branch List</h2>
+            <a asp-controller="Branches" asp-action="Create" class="btn btn-primary">Add new</a>
+        </div>
+    </div>
+</div>
+
+<table id="branchTable" class="table table-bordered table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Branches Code 
+            </th>
+            <th>
+                Branches Name
+            </th>
+            <th>
+                Branches Manager
+            </th>
+            <th>
+                Date Opened
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+
+    
+    <script type="text/javascript">
+        var js = jQuery.noConflict(true);
+    js(document).ready(function () {
+            
+            console.log("Document ready.");
+       js.ajax({
+                url: "/Branches/GetBranches",
+                type: "POST",
+                success: function (data) {
+                        var empdata = [];
+                        $.each(data, function (key, value) {
+                        var editIcon = `<i class="bi bi-pencil-fill"></i>`
+                        var editbtn = `<a href="/Branches/Edit/${value.id}" class="btn btn-primary">${editIcon} Edit</a>`;
+                        var trashIcon = `<i class="bi bi-trash3-fill"></i>`;
+                        var deletebtn = `<a href="/Branches/Delete/${value.id}" class="btn btn-danger">${trashIcon} Delete</a>`;
+
+                    var action = editbtn + "  "  + deletebtn;
+                        empdata.push([value.branchCode, value.branchName, value.branchManager, value.dateOpened, action])
+                    })
+                   
+                js('#branchTable').DataTable({
+                        data: empdata, // Use the modified data
+                        columns: [
+                            { title: "Branches Code" },
+                            { title: "Branches Name" },
+                            { title: "Branches Manager" },
+                            { title: "Date Opened" },
+                            { title: "Actions" }
+                        ]
+                    });
+                },
+                error: function (error) {
+                    console.error("Error:", error);
+                }
+            });
+            
+        });
+
+    </script>
+
